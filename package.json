@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node api/index.js \"mongodb+srv://erik218124:erikmedeiros123@cluster0.0eby3zr.mongodb.net/tarefasDBB\""
   },
   "author": "",
   "license": "ISC",
