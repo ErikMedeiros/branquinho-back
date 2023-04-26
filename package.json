@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node api/index.js \"mongodb+srv://erik218124:erikmedeiros123@cluster0.0eby3zr.mongodb.net/tarefasDBB\""
+    "start": "node index.js \"mongodb+srv://erik218124:erikmedeiros123@cluster0.0eby3zr.mongodb.net/tarefasDB\""
   },
   "author": "",
   "license": "ISC",
