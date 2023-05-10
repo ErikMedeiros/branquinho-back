@@ -92,13 +92,21 @@ router.delete("/removeAll", verificaJWT, async (req, res) => {
 
 //Autenticacao
 var jwt = require('jsonwebtoken');
+var userModel = require('../models/user')
 
-router.post('/login', (req, res, next) => {
-  if (req.body.nome === 'melhorauladafaculdade' && req.body.senha === 'aicaramba') {
-    const token = jwt.sign({ id: req.body.nome }, 'segredo', { expiresIn: 300 });
-    return res.json({ auth: true, token: token });
+router.post('/login', async (req, res, next) => {
+  try {
+    const data = await userModel.findOne({ 'nome': req.body.nome });
+
+    if (data != null && data.senha === req.body.senha) {
+      const token = jwt.sign({ id: req.body.user }, 'segredo', { expiresIn: 300 });
+      return res.json({ token: token });
+    }
+
+    res.status(500).json({ message: 'Login invalido!' });
+  } catch (error) {
+    res.status(500).json({ message: error.message })
   }
-  res.status(500).json({ message: 'Login invalido!' });
 })
 
 function verificaJWT(req, res, next) {
@@ -106,7 +114,7 @@ function verificaJWT(req, res, next) {
   if (!token) return res.status(401).json({
     auth: false, message: 'Token nao fornecido'
   });
-  
+
   jwt.verify(token, 'segredo', function (err, decoded) {
     if (err) return res.status(500).json({ auth: false, message: 'Falha !' });
     next();
