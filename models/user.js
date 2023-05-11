@@ -7,6 +7,7 @@ var userSchema = new mongoose.Schema({
     senha: {
         type: String
     },
+    admin: {type: Boolean}
 },
     {
         versionKey: false

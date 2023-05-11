@@ -100,7 +100,7 @@ router.post('/login', async (req, res, next) => {
 
     if (data != null && data.senha === req.body.senha) {
       const token = jwt.sign({ id: req.body.user }, 'segredo', { expiresIn: 300 });
-      return res.json({ token: token });
+      return res.json({ token: token, admin: data.admin });
     }
 
     res.status(500).json({ message: 'Login invalido!' });
