@@ -109,6 +109,44 @@ router.post('/login', async (req, res, next) => {
   }
 })
 
+router.get('/user', verificaJWT, async (req, res) => {
+  try {
+    const data = await userModel.find();
+    res.json(data);
+  } catch(error) {
+    res.status(500).json({message: error.message})
+  }
+})
+
+router.delete("/user/:id", verificaJWT, async (req, res) => {
+  try {
+    const resultado = await userModel.findByIdAndDelete(req.params.id);
+    res.json(resultado);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.patch("/user/:id", verificaJWT, async (req, res) => {
+  try {
+    const { params: { id }, body: usuario } = req;
+    const result = await userModel.findByIdAndUpdate(id, usuario, { new:true });
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.post("/user", verificaJWT, async (req, res) => {
+  const usuario = new userModel({ nome: req.body.nome, senha: req.body.senha });
+  try {
+    const usuarioSalvo = await usuario.save();
+    res.status(200).json(usuarioSalvo);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 function verificaJWT(req, res, next) {
   const token = req.headers['id-token'];
   if (!token) return res.status(401).json({
