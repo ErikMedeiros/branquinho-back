@@ -98,7 +98,7 @@ router.post('/login', async (req, res, next) => {
   try {
     const data = await userModel.findOne({ 'nome': req.body.nome });
 
-    if (data != null && data.senha === req.body.senha) {
+    if (data!=null && validPassword(req.body.senha, data.hash, data.salt)) {
       const token = jwt.sign({ id: req.body.user }, 'segredo', { expiresIn: 300 });
       return res.json({ token: token, admin: data.admin });
     }
@@ -110,11 +110,11 @@ router.post('/login', async (req, res, next) => {
 })
 
 router.get('/user', verificaJWT, async (req, res) => {
-  try {
+  try { 
     const data = await userModel.find();
     res.json(data);
-  } catch(error) {
-    res.status(500).json({message: error.message})
+  } catch (error) {
+    res.status(500).json({ message: error.message })
   }
 })
 
@@ -130,7 +130,7 @@ router.delete("/user/:id", verificaJWT, async (req, res) => {
 router.patch("/user/:id", verificaJWT, async (req, res) => {
   try {
     const { params: { id }, body: usuario } = req;
-    const result = await userModel.findByIdAndUpdate(id, usuario, { new:true });
+    const result = await userModel.findByIdAndUpdate(id, usuario, { new: true });
     res.json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -158,3 +158,8 @@ function verificaJWT(req, res, next) {
     next();
   });
 }
+var { createHash } = require('crypto');
+function validPassword(senha, hashBD, saltBD) {
+  hashCalculado = createHash('sha256').update(senha + saltBD).digest('hex');
+  return hashCalculado === hashBD;
+};
